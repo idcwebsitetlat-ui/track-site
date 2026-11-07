@@ -174,6 +174,9 @@ function cell_(v) {
     // תא של שעה בלבד נשמר בגיליונות כתאריך בשנת 1899
     return v.getFullYear() < 1901 ? formatDate_(v, 'HH:mm') : formatDate_(v, 'yyyy-MM-dd');
   }
+  // תאריך שהוקלד כטקסט, למשל 8.11.26 או 8/11/2026
+  var m = typeof v === 'string' && v.trim().match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{2}|\d{4})$/);
+  if (m) return (m[3].length === 2 ? '20' + m[3] : m[3]) + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2);
   return v === null ? '' : v;
 }
 

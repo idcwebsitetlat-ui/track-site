@@ -43,12 +43,26 @@
     location.replace("login.html");
   }
 
+  // תאריך שהוקלד בגיליון כטקסט (8.11.26, 8/11/2026) הופך ל-2026-11-08, כמו תאריך רגיל
+  function normalizeDates(res) {
+    Object.keys(res.tabs || {}).forEach(function (t) {
+      res.tabs[t].forEach(function (row) {
+        Object.keys(row).forEach(function (k) {
+          var m = typeof row[k] === "string" && row[k].trim().match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{2}|\d{4})$/);
+          if (m) row[k] = (m[3].length === 2 ? "20" + m[3] : m[3]) + "-" + m[2].padStart(2, "0") + "-" + m[1].padStart(2, "0");
+        });
+      });
+    });
+    return res;
+  }
+
   /* מציג מיד את התוכן מהביקור הקודם (אם יש), ואז מרענן מהשרת ומציג שוב רק אם משהו השתנה */
   function loadContent(render, onError) {
     var cached = store(CONTENT);
-    if (cached) render(cached, { fresh: false });
+    if (cached) render(normalizeDates(cached), { fresh: false });
     api("content").then(function (res) {
       if (!res || !res.ok) throw new Error(res && res.error);
+      normalizeDates(res);
       var same = cached && JSON.stringify(cached.tabs) === JSON.stringify(res.tabs) &&
         JSON.stringify(cached.settings) === JSON.stringify(res.settings) &&
         JSON.stringify(cached.lessonChanges) === JSON.stringify(res.lessonChanges);
