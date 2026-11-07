@@ -1,0 +1,9 @@
+# המאגר ציבורי, ולכן מסמכי ההעברה, עותק הגיליון וקבצי Claude נשארים רק במחשב
+docs/
+data/
+.agents/
+.claude/
+skills-lock.json
+.DS_Store
+__pycache__/
+*.pyc

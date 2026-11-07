@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אתר המסלול · כלכלה, מנהל עסקים וחשבונאות</title>
+<meta name="description" content="עדכונים, מועדים, מטלות ואנשי קשר לסטודנטים במסלול התלת־חוגי ברייכמן">
+<meta name="theme-color" content="#0F6E64">
+<meta name="robots" content="noindex">
+<script>try{if(!localStorage.getItem("track-session")){sessionStorage.setItem("track-next",location.pathname.split("/").pop()+location.hash);location.replace("login.html")}}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<a class="skip" href="#main">דילוג לתוכן</a>
+<header class="site-top"><div class="in">
+<a class="brand" href="index.html">כלכלה, מנהל עסקים וחשבונאות</a>
+<nav class="site-nav" aria-label="ניווט ראשי"><ul><li><a href="index.html#updates" aria-current="page">עדכונים</a></li><li><a href="index.html#week">מועדים</a></li><li><a href="index.html#tasks">מטלות</a></li><li><a href="index.html#contacts">אנשי קשר</a></li><li><a href="takanonim/index.html">תקנונים</a></li><li><a href="index.html#links">קישורים</a></li><li><a href="index.html#tutoring">שיעורים פרטיים</a></li><li><a href="inquiry.html">פניות</a></li></ul></nav>
+<button type="button" class="logout" data-logout>יציאה</button>
+<button type="button" class="a11y-btn" id="a11y-open" aria-label="תפריט נגישות" aria-expanded="false" aria-controls="a11y-panel"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"></circle><path d="M4 8l8 1 8-1"></path><path d="M12 9v5l-3 7"></path><path d="M12 14l3 7"></path></svg></button>
+</div></header>
+<div class="a11y-panel" id="a11y-panel" role="dialog" aria-modal="false" aria-labelledby="a11y-title" hidden>
+<div class="a11y-head"><h2 id="a11y-title">נגישות</h2><button type="button" id="a11y-close" aria-label="סגירת תפריט הנגישות" style="width:44px">×</button></div>
+<div class="a11y-row"><span style="font-weight:700">גודל טקסט</span><div class="sz" role="group" aria-label="גודל טקסט"><button type="button" data-size="0.9" aria-pressed="false">א−</button><button type="button" data-size="1" aria-pressed="true">א</button><button type="button" data-size="1.15" aria-pressed="false">א+</button><button type="button" data-size="1.3" aria-pressed="false">א++</button></div></div>
+<div class="a11y-grid">
+<button type="button" data-flag="contrast" aria-pressed="false">ניגודיות גבוהה</button>
+<button type="button" data-flag="links" aria-pressed="false">הדגשת קישורים</button>
+<button type="button" data-flag="font" aria-pressed="false">גופן קריא</button>
+<button type="button" data-flag="still" aria-pressed="false">עצירת אנימציות</button>
+<button type="button" data-flag="spacing" aria-pressed="false">ריווח שורות</button>
+<button type="button" data-flag="cursor" aria-pressed="false">סמן מוגדל</button>
+</div>
+<div class="a11y-foot"><button type="button" id="a11y-reset">איפוס הגדרות</button><a href="accessibility.html">הצהרת נגישות</a></div>
+</div>
+<main id="main" tabindex="-1">
+<div class="page">
+
+<section class="view" data-view="updates" aria-labelledby="h-updates" tabindex="-1">
+<h1 class="h1" id="h-updates">עדכונים</h1>
+<p class="lead" id="hello">מה חדש במסלול, ומה מחכה לכם בימים הקרובים.</p>
+<div class="cols">
+<div class="col stagger" id="updates-main"></div>
+<div class="col stagger" id="updates-side"></div>
+</div>
+</section>
+
+<section class="view" data-view="week" aria-labelledby="h-week" tabindex="-1" hidden>
+<h1 class="h1" id="h-week">מועדים</h1>
+<p class="lead">השבוע הקרוב, ואחריו כל המועדים של הסמסטר: מבחנים, הגשות, חופשות ואירועים.</p>
+<div class="cols">
+<div class="col">
+<div class="chips" role="group" aria-label="סינון לפי סוג" id="week-filters"></div>
+<div id="timeline"></div>
+</div>
+<div class="col stagger" id="week-side"></div>
+</div>
+</section>
+
+<section class="view" data-view="tasks" aria-labelledby="h-tasks" tabindex="-1" hidden>
+<h1 class="h1" id="h-tasks">מטלות ותנאי סף</h1>
+<p class="lead">מה צריך להגיש ועד מתי, ומעקב אישי אחרי תנאי הסף של כל קורס.</p>
+<div class="cols even">
+<div class="col" id="tasks-main"></div>
+<div class="col" id="tasks-side"></div>
+</div>
+</section>
+
+<section class="view" data-view="contacts" aria-labelledby="h-contacts" tabindex="-1" hidden>
+<h1 class="h1" id="h-contacts">אנשי קשר</h1>
+<p class="lead">המרצים והמתרגלים של המסלול. מופיעים רק מיילים שהסגל פרסם בעצמו, בסילבוס או באתר הקורס.</p>
+<div class="chips" role="group" aria-label="סינון לפי קורס" id="contact-filters"></div>
+<div class="grid stagger" id="contacts"></div>
+</section>
+
+<section class="view" data-view="links" aria-labelledby="h-links" tabindex="-1" hidden>
+<h1 class="h1" id="h-links">קישורים שימושיים</h1>
+<p class="lead">סיכומים, סרטונים, אתרים וכלים. חומרים של המרצים נמצאים ב-Moodle של כל קורס.</p>
+<div class="chips" role="group" aria-label="סינון לפי סוג" id="link-filters"></div>
+<div class="grid stagger" id="links"></div>
+</section>
+
+<section class="view" data-view="tutoring" aria-labelledby="h-tutoring" tabindex="-1" hidden>
+<h1 class="h1" id="h-tutoring">שיעורים פרטיים</h1>
+<p class="lead">רק שיעורים שמתואמים דרך האוניברסיטה.</p>
+<div class="stack stagger" id="tutoring" style="max-width:44rem"></div>
+</section>
+
+</div>
+</main>
+<footer class="site-foot"><div class="in"><div class="links"><a href="accessibility.html">הצהרת נגישות</a><a href="privacy.html">הצהרת פרטיות</a><a href="takanonim/index.html">תקנונים</a></div><div>המידע אינו מחליף את המסמכים הרשמיים של האוניברסיטה.</div></div></footer>
+<script src="assets/a11y.js" defer></script>
+<script src="assets/site.js" defer></script>
+<script src="assets/home.js" defer></script>
+</body>
+</html>

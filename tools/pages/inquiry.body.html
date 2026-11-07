@@ -1,0 +1,72 @@
+<div class="page narrow">
+
+<section id="step-route" aria-labelledby="h-inq" class="enter">
+<h1 class="h1" id="h-inq">פנייה לנציג</h1>
+<p class="lead">קודם בוחרים למי הפנייה מתאימה.</p>
+<div class="choices" role="group" aria-label="סוג הפנייה">
+<button type="button" class="choice" id="choose-track" aria-pressed="false" aria-controls="track-form">
+<b>פנייה מסלולית</b>
+<span class="muted">נושא שנוגע לקורס או לכל השנתון: עומס הגשות, מועד מבחן, בעיה שחוזרת אצל כמה סטודנטים.</span>
+</button>
+<button type="button" class="choice" id="choose-personal" aria-pressed="false" aria-controls="personal">
+<b>פנייה אישית</b>
+<span class="muted">נושא שנוגע רק לך: מילואים, התאמות, מצב רפואי או אישי, שכר לימוד.</span>
+</button>
+</div>
+
+<section class="card soft enter" id="personal" hidden aria-labelledby="h-personal">
+<h2 class="t2" id="h-personal">פנייה אישית: ישירות לרכזת מנהל הסטודנטים</h2>
+<p style="margin:0">נושאים אישיים לא עוברים דרך הנציג. הרכזת מטפלת בהם בפרטיות, ויש לה גישה למידע שלך במערכות האוניברסיטה.</p>
+<div id="coord" style="margin-top:.75rem"></div>
+</section>
+
+<form class="card enter" id="track-form" hidden novalidate aria-labelledby="h-form">
+<h2 class="t2" id="h-form">פנייה מסלולית</h2>
+<p class="hint" id="who" style="margin:-.4rem 0 1rem"></p>
+<div class="field">
+<label for="iq-course">קורס</label>
+<select class="input" id="iq-course"><option>כללי</option></select>
+</div>
+<div class="field">
+<label for="iq-topic">נושא</label>
+<input class="input" id="iq-topic" maxlength="120" placeholder="למשל: עומס הגשות בשבוע של ההאקתון" aria-describedby="topic-err">
+<p class="err" id="topic-err" hidden>צריך לכתוב נושא לפנייה.</p>
+</div>
+<div class="field">
+<label for="iq-details">פירוט</label>
+<textarea class="input" id="iq-details" maxlength="3000" aria-describedby="details-hint"></textarea>
+<span class="hint" id="details-hint">מה קרה, את מי זה מעסיק, ומה היית רוצה שיקרה.</span>
+</div>
+<label class="check"><input type="checkbox" id="iq-anon"><span>להעביר לסגל בלי השם שלי</span></label>
+
+<div class="privacy" role="note" aria-labelledby="h-priv">
+<h3 id="h-priv">לפני שליחת הפנייה</h3>
+<p><b>מה נשמר:</b> השם שלך, נושא הפנייה והפירוט. בוואטסאפ גם מספר הטלפון שלך.</p>
+<p><b>איפה:</b> בגיליון Google Sheets ובתיבת המייל של נציג המסלול, ובהתכתבות הוואטסאפ איתו.</p>
+<p><b>למה:</b> כדי לטפל בפנייה ולהעביר אותה לסגל המסלול. אם סימנת ״בלי שמי״, הנושא יועבר בלי פרטים מזהים.</p>
+<p><b>כמה זמן:</b> עד סוף שנת הלימודים, ואז הפניות נמחקות.</p>
+<p><b>הזכויות שלך:</b> אפשר לבקש לעיין בפנייה או למחוק אותה, בהודעה לנציג.</p>
+<p>אל תכללו מידע רפואי או אישי רגיש. לנושאים כאלה פנו ישירות לרכזת מנהל הסטודנטים.</p>
+<p><a href="privacy.html">הצהרת הפרטיות המלאה</a></p>
+</div>
+<label class="check"><input type="checkbox" id="iq-consent"><span>קראתי ואני מסכים/ה לשמירת הפנייה כמתואר</span></label>
+<p class="err" id="send-err" role="alert" hidden></p>
+<button type="submit" class="btn" id="iq-send" disabled style="margin-top:.5rem">שליחת הפנייה</button>
+<p class="hint" id="send-hint">הכפתור נפתח אחרי שמסמנים את ההסכמה.</p>
+</form>
+</section>
+
+<section class="card sent" id="step-sent" hidden aria-labelledby="h-sent" tabindex="-1">
+<svg aria-hidden="true" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><circle cx="12" cy="12" r="10"></circle><path d="M7.5 12.5l3 3 6-6.5"></path></svg>
+<h1 class="h1" id="h-sent" style="margin-top:.5rem">הפנייה נשלחה</h1>
+<p class="muted" style="margin:0">מספר הפנייה</p>
+<p class="id num" id="sent-id"></p>
+<p>הפנייה נרשמה, והנציג קיבל עליה מייל. אפשר להמשיך גם בוואטסאפ, עם הודעה מוכנה שכוללת את מספר הפנייה.</p>
+<p class="hint">מענה בדרך כלל תוך 2–3 ימי לימודים.</p>
+<div class="row-btns" style="justify-content:center">
+<a class="btn" id="wa-link" target="_blank" rel="noopener" hidden><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"></path></svg>המשך בוואטסאפ</a>
+<a class="btn ghost" href="index.html">חזרה לעדכונים</a>
+</div>
+</section>
+
+</div>
