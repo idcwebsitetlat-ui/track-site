@@ -11,7 +11,7 @@
 
 ## ארכיטקטורה
 
-- אתר סטטי ב-GitHub Pages.
+- אתר סטטי ב-GitHub Pages: https://idcwebsitetlat-ui.github.io/track-site/ (מאגר ציבורי `idcwebsitetlat-ui/track-site`, ענף `main`). כל push ל-main מתפרסם תוך דקה-שתיים. `gh` מותקן ב-`~/.local/bin`.
 - התוכן מגיע מ-Google Sheet אחד: כל לשונית היא קטגוריה (העותק המקומי: `data/אתר המסלול - תוכן.xlsx`).
 - השרת הוא Google Apps Script: בדיקת שם בכניסה, רישום פניות, מייל התראה וקריאת תוכן. הקוד ב-`apps-script/`, והוא רץ בחשבון idc.website.tlat@gmail.com.
   - כתובת השרת: `https://script.google.com/macros/s/AKfycbyBZtw11GVERKJVmb8GyC2e__TVITftG3tyPLPaHaOyLo2JYDdPe6xEpK0pG0j2CL383Q/exec`
