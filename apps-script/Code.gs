@@ -460,6 +460,16 @@ function testLessonChanges() {
   changes.forEach(function (c) { console.log(c.date + ' ' + c.start + ' · ' + c.kind + ' · ' + c.title); });
 }
 
+/** אבחון: מה בדיוק מחזיר הקישור של Moodle לשרתים של Google (קוד, כותרות ותחילת התשובה) */
+function debugMoodleFeed() {
+  var url = PropertiesService.getScriptProperties().getProperty('MOODLE_CALENDAR_URL') || '';
+  console.log('אורך הקישור: ' + url.length + ', מתחיל ב: ' + url.slice(0, 45) + ', מסתיים ב: ' + url.slice(-30));
+  var res = UrlFetchApp.fetch(url.trim(), { muteHttpExceptions: true, followRedirects: false });
+  console.log('קוד: ' + res.getResponseCode());
+  console.log('כותרות: ' + JSON.stringify(res.getHeaders()));
+  console.log('תחילת התשובה: ' + res.getContentText().slice(0, 600));
+}
+
 /** בדיקת היומן של Moodle: אילו מטלות השרת מוצא */
 function testMoodleTasks() {
   CacheService.getScriptCache().remove('cal-MOODLE_CALENDAR_URL');
