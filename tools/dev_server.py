@@ -25,6 +25,12 @@ SAMPLE_CHANGES = [
      "kind": "בזום", "location": "ZOOM", "regular": "יום א׳ 13:45, A318"},
 ]
 
+# דוגמה למטלות מ-Moodle, בפורמט שהשרת האמיתי מחזיר
+SAMPLE_MOODLE = [
+    {"course": "מבוא לחשבונאות", "name": "מטלה 2", "date": "2026-11-11", "time": "08:00"},
+    {"course": "יסודות הכלכלה מיקרו", "name": "תרגיל מס' 3", "date": "2026-11-12", "time": "23:59"},
+]
+
 
 def cell(v):
     if isinstance(v, dt.datetime):
@@ -39,7 +45,7 @@ def cell(v):
 def content():
     wb = openpyxl.load_workbook(XLSX, data_only=True)
     today = dt.date.today().isoformat()
-    out = {"ok": True, "tabs": {}, "settings": {}, "lessonChanges": SAMPLE_CHANGES}
+    out = {"ok": True, "tabs": {}, "settings": {}, "lessonChanges": SAMPLE_CHANGES, "moodleTasks": SAMPLE_MOODLE}
     for ws in wb.worksheets:
         if ws.title in HIDDEN_TABS:
             continue

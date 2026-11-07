@@ -145,12 +145,21 @@ function content_(req) {
     out.tabs[name] = filterRows_(name, rows, new Date());
   });
 
-  // אם היומן של האוניברסיטה לא זמין, שאר התוכן עדיין נשלח
+  // אם אחד היומנים לא זמין, שאר התוכן עדיין נשלח, ונציג המסלול מקבל מייל
+  var today = formatDate_(new Date(), 'yyyy-MM-dd');
   try {
-    out.lessonChanges = lessonChanges_(fetchCalendar_(), formatDate_(new Date(), 'yyyy-MM-dd'));
+    out.lessonChanges = lessonChanges_(fetchCalendar_('UNIV_CALENDAR_URL'), today);
   } catch (err) {
     console.error(err);
     out.lessonChanges = null;
+    alertBrokenFeed_('UNIV_CALENDAR_URL', 'היומן של תחנת המידע (שינויים בשיעורים)', err);
+  }
+  try {
+    out.moodleTasks = moodleTasks_(fetchCalendar_('MOODLE_CALENDAR_URL'), out.tabs['קורסים'] || []);
+  } catch (err) {
+    console.error(err);
+    out.moodleTasks = null;
+    alertBrokenFeed_('MOODLE_CALENDAR_URL', 'היומן של Moodle (מטלות)', err);
   }
 
   try { cache.put('content', JSON.stringify(out), CACHE_SECONDS); } catch (err) { /* גדול מדי לזיכרון המטמון */ }
@@ -198,21 +207,45 @@ function filterRows_(tab, rows, now) {
   });
 }
 
-// ---------- שינויים בשיעורים (מהיומן בתחנת המידע) ----------
-// הקישור ליומן נשמר ב-Script properties בשם UNIV_CALENDAR_URL, כי יש בו אסימון אישי
+// ---------- יומנים חיצוניים: תחנת המידע ו-Moodle ----------
+// הקישורים נשמרים ב-Script properties (UNIV_CALENDAR_URL, MOODLE_CALENDAR_URL), כי יש בהם אסימון אישי
 
 var CALENDAR_CACHE_SECONDS = 3600;
 var REGULAR_MIN_COUNT = 3;  // מועד שחוזר לפחות 3 פעמים בקורס נחשב למועד הקבוע
 
-function fetchCalendar_() {
+function fetchCalendar_(key) {
   var cache = CacheService.getScriptCache();
-  var hit = cache.get('calendar');
+  var hit = cache.get('cal-' + key);
   if (hit) return hit;
-  var url = PropertiesService.getScriptProperties().getProperty('UNIV_CALENDAR_URL');
-  if (!url) throw new Error('UNIV_CALENDAR_URL חסר ב-Script properties.');
-  var text = UrlFetchApp.fetch(url).getContentText('UTF-8');
-  try { cache.put('calendar', text, CALENDAR_CACHE_SECONDS); } catch (err) { /* גדול מדי לזיכרון המטמון */ }
+  var url = PropertiesService.getScriptProperties().getProperty(key);
+  if (!url) throw new Error(key + ' חסר ב-Script properties.');
+  var res = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+  var text = res.getContentText('UTF-8');
+  // קישור שפג תוקפו מחזיר בדרך כלל דף שגיאה ולא יומן
+  if (res.getResponseCode() !== 200 || text.indexOf('BEGIN:VCALENDAR') === -1) {
+    throw new Error('הקישור החזיר ' + res.getResponseCode() + ' בלי יומן');
+  }
+  try { cache.put('cal-' + key, text, CALENDAR_CACHE_SECONDS); } catch (err) { /* גדול מדי לזיכרון המטמון */ }
   return text;
+}
+
+// מייל אחד ביום לכל היותר, לכל יומן שהפסיק לעבוד
+function alertBrokenFeed_(key, label, err) {
+  var props = PropertiesService.getScriptProperties();
+  if (!props.getProperty(key)) return;  // יומן שעוד לא הוגדר הוא לא תקלה
+  var today = formatDate_(new Date(), 'yyyy-MM-dd');
+  if (props.getProperty('ALERT_' + key) === today) return;
+  var to = readSettings_()['מייל לקבלת התראות על פניות'];
+  if (!to) return;
+  props.setProperty('ALERT_' + key, today);
+  MailApp.sendEmail({
+    to: to,
+    subject: 'אתר המסלול: ' + label + ' הפסיק לעבוד',
+    body: 'השרת לא הצליח לקרוא את ' + label + '.\n\n' +
+      'הסיבה הנפוצה: החלפת סיסמה, או מעבר לשנה חדשה. צריך להוציא קישור חדש ולהחליף אותו ב-Apps Script, ' +
+      'בגלגל השיניים תחת Script properties, בשדה ' + key + '.\n\n' +
+      'עד אז האתר ממשיך לעבוד, בלי המידע מהיומן הזה.\n\nהשגיאה: ' + err
+  });
 }
 
 function parseIcs_(text) {
@@ -228,9 +261,15 @@ function parseIcs_(text) {
   });
 }
 
-// 20261018T094500 → {date: '2026-10-18', time: '09:45', day: 0}
+// 20261018T094500 → {date: '2026-10-18', time: '09:45', day: 0}. שעה ב-UTC (עם Z בסוף) מומרת לשעון ישראל
 function icsTime_(v) {
-  var m = String(v || '').match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/);
+  v = String(v || '');
+  if (/T\d{6}Z$/.test(v)) {
+    var u = v.match(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/);
+    var d = new Date(Date.UTC(+u[1], +u[2] - 1, +u[3], +u[4], +u[5], +u[6]));
+    v = formatDate_(d, "yyyyMMdd'T'HHmmss");
+  }
+  var m = v.match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/);
   if (!m) return null;
   return {
     date: m[1] + '-' + m[2] + '-' + m[3],
@@ -294,6 +333,24 @@ function lessonChanges_(icsText, today) {
     });
   });
   return out.sort(function (a, b) { return (a.date + a.start) < (b.date + b.start) ? -1 : 1; });
+}
+
+/**
+ * מטלות מ-Moodle. הקורס מזוהה לפי הקוד שב-CATEGORIES (למשל "מבוא לחשבונאות-985-2027/1 - 2701418"),
+ * כדי שיופיע באותו שם כמו בלשונית "קורסים". התיאור של המרצה לא מועתק: באתר יש קישור ל-Moodle.
+ */
+function moodleTasks_(icsText, courses) {
+  var byCode = {};
+  courses.forEach(function (c) { if (c['קוד']) byCode[String(c['קוד']).trim()] = c['שם הקורס']; });
+  return parseIcs_(icsText).map(function (e) {
+    var cat = String(e.CATEGORIES || '');
+    var m = cat.match(/^(.*?)-(\d+)-/);
+    var course = m ? (byCode[m[2]] || m[1].trim()) : cat;
+    var summary = String(e.SUMMARY || '');
+    var name = (summary.match(/['׳"״](.+)['׳"״]/) || [])[1] || summary;
+    var t = icsTime_(e.DTSTART);
+    return t ? { course: course, name: name, date: t.date, time: t.time } : null;
+  }).filter(Boolean).sort(function (a, b) { return (a.date + a.time) < (b.date + b.time) ? -1 : 1; });
 }
 
 // ---------- פניות ----------
@@ -397,10 +454,20 @@ function setup() {
 
 /** בדיקת היומן של האוניברסיטה: כמה שינויים בשיעורים יש מהיום והלאה */
 function testLessonChanges() {
-  CacheService.getScriptCache().remove('calendar');
-  var changes = lessonChanges_(fetchCalendar_(), formatDate_(new Date(), 'yyyy-MM-dd'));
+  CacheService.getScriptCache().remove('cal-UNIV_CALENDAR_URL');
+  var changes = lessonChanges_(fetchCalendar_('UNIV_CALENDAR_URL'), formatDate_(new Date(), 'yyyy-MM-dd'));
   console.log('שינויים בשיעורים מהיום והלאה: ' + changes.length);
   changes.forEach(function (c) { console.log(c.date + ' ' + c.start + ' · ' + c.kind + ' · ' + c.title); });
+}
+
+/** בדיקת היומן של Moodle: אילו מטלות השרת מוצא */
+function testMoodleTasks() {
+  CacheService.getScriptCache().remove('cal-MOODLE_CALENDAR_URL');
+  var courses = rowsToObjects_(contentSheet_().getSheetByName('קורסים').getDataRange().getValues());
+  var tasks = moodleTasks_(fetchCalendar_('MOODLE_CALENDAR_URL'), courses);
+  console.log('מטלות מ-Moodle: ' + tasks.length);
+  tasks.forEach(function (t) { console.log(t.date + ' ' + t.time + ' · ' + t.course + ' · ' + t.name); });
+  CacheService.getScriptCache().remove('content');
 }
 
 /** בדיקת כניסה עם השם הראשון ברשימה, ובדיקת קריאת התוכן */

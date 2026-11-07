@@ -65,7 +65,8 @@
       normalizeDates(res);
       var same = cached && JSON.stringify(cached.tabs) === JSON.stringify(res.tabs) &&
         JSON.stringify(cached.settings) === JSON.stringify(res.settings) &&
-        JSON.stringify(cached.lessonChanges) === JSON.stringify(res.lessonChanges);
+        JSON.stringify(cached.lessonChanges) === JSON.stringify(res.lessonChanges) &&
+        JSON.stringify(cached.moodleTasks) === JSON.stringify(res.moodleTasks);
       store(CONTENT, res);
       if (!same) render(res, { fresh: true });
     }).catch(function (err) {

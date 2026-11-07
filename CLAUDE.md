@@ -17,6 +17,7 @@
   - כתובת השרת: `https://script.google.com/macros/s/AKfycbyBZtw11GVERKJVmb8GyC2e__TVITftG3tyPLPaHaOyLo2JYDdPe6xEpK0pG0j2CL383Q/exec`
   - כל הבקשות ב-POST עם `Content-Type: text/plain` וגוף JSON: `login`, `content`, `inquiry` (פירוט בראש `Code.gs`).
   - שינויים בשיעורים: השרת קורא את היומן האישי של אלון מתחנת המידע (iCal, הקישור ב-Script property `UNIV_CALENDAR_URL`, לא בקוד כי יש בו אסימון) ומחזיר ב-`content` את השדה `lessonChanges`.
+  - מטלות מ-Moodle: השרת קורא את יומן ה-Moodle של אלון (Script property `MOODLE_CALENDAR_URL`) ומחזיר `moodleTasks`. האתר ממזג אותן עם לשונית "מטלות". אם יומן נשבר, נשלח מייל התראה פעם ביום.
   - כשמעדכנים את הקוד: Deploy, ואז Manage deployments, ואז New version. כך הכתובת לא משתנה.
 - גיליון פרטי, `אתר המסלול - פרטי.xlsx`, מכיל את רשימת השמות ואת יומן הפניות. רק Apps Script ניגש אליו, ואין לו עותק בפרויקט.
 - **כניסה:** שם פרטי ושם משפחה בעברית מול הרשימה הפרטית. הבדיקה נעשית בשרת והאתר מקבל רק כן או לא. היא מתעלמת מרווחים כפולים ומקפים ומקבלת גם סדר הפוך. **אין ת״ז ואין סיסמאות.**

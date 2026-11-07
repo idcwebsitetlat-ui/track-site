@@ -47,13 +47,26 @@
   }
   var FILTERS = [["all", "הכול"], ["exam", "מבחנים"], ["sub", "הגשות"], ["hol", "חגים וחופשות"], ["event", "אירועים אקדמיים"], ["track", "אירועי מסלול"]];
 
-  // כל המועדים: לשונית המועדים ועוד הדדליינים מלשונית המטלות
+  var MOODLE_URL = "https://moodle.runi.ac.il/2027/calendar/view.php?view=upcoming";
+
+  // המטלות מהגיליון ועוד המטלות מ-Moodle. מטלה מ-Moodle שכבר יש לה שורה בגיליון (אותו קורס ואותו יום) לא מופיעה פעמיים
+  function allTasks() {
+    var sheet = tab("מטלות");
+    var seen = {};
+    sheet.forEach(function (t) { seen[(t["קורס"] || "") + "|" + t["דדליין"]] = true; });
+    var moodle = (data.moodleTasks || []).filter(function (m) { return !seen[m.course + "|" + m.date]; }).map(function (m) {
+      return { "קורס": m.course, "שם המטלה": m.name, "דדליין": m.date, "שעה": m.time, "אופן הגשה": "Moodle", "קישור": MOODLE_URL, moodle: true };
+    });
+    return sheet.concat(moodle);
+  }
+
+  // כל המועדים: לשונית המועדים ועוד הדדליינים של המטלות
   function events() {
     var list = tab("מועדים").map(function (r) {
       return { date: r["תאריך"], end: r["תאריך סיום"] || "", time: r["שעה"] || "", type: r["סוג"] || "", kind: kindOf(r["סוג"]),
                title: r["כותרת"] || "", course: r["קורס"] || "", place: r["מיקום"] || "", notes: r["הערות"] || "" };
     });
-    tab("מטלות").forEach(function (r) {
+    allTasks().forEach(function (r) {
       list.push({ date: r["דדליין"], end: "", time: r["שעה"] || "", type: "הגשה", kind: "sub",
                   title: r["שם המטלה"] || "", course: r["קורס"] || "", place: r["אופן הגשה"] ? "הגשה ב-" + r["אופן הגשה"] : "", notes: r["מה נדרש"] || "" });
     });
@@ -200,7 +213,7 @@
   /* ---------- מטלות ותנאי סף ---------- */
 
   function renderTasks() {
-    var tasks = tab("מטלות").filter(function (t) { return S.parseDate(t["דדליין"]); })
+    var tasks = allTasks().filter(function (t) { return S.parseDate(t["דדליין"]); })
       .sort(function (a, b) { return (a["דדליין"] + (a["שעה"] || "")) < (b["דדליין"] + (b["שעה"] || "")) ? -1 : 1; });
     var past = tasks.filter(function (t) { return t["דדליין"] < todayIso; });
     var shown = ui.showPastTasks ? tasks : tasks.filter(function (t) { return t["דדליין"] >= todayIso; });
@@ -217,10 +230,11 @@
           "<span>" + esc(S.dayName(t["דדליין"])) + ", " + esc(S.shortDate(t["דדליין"])) + (t["שעה"] ? " · " + esc(t["שעה"]) : "") + "</span>" +
           (t["אופן הגשה"] ? "<span>הגשה ב-" + esc(t["אופן הגשה"]) + "</span>" : "") + "</div>" +
           (t["מה נדרש"] ? '<p style="margin:.35rem 0 0">' + esc(t["מה נדרש"]) + "</p>" : "") +
-          (link ? '<a class="linkbtn" href="' + esc(link) + '" target="_blank" rel="noopener">לפרטי המטלה</a>' : "") + "</li>";
+          (link ? '<a class="linkbtn" href="' + esc(link) + '" target="_blank" rel="noopener">' + (t.moodle ? "לפרטים ב-Moodle" : "לפרטי המטלה") + "</a>" : "") + "</li>";
       }).join("") + "</ul></section>";
     }).join("");
-    if (!html) html = '<section class="card"><p class="empty">' + (tasks.length ? "אין מטלות פתוחות כרגע." : "עוד לא נוספו מטלות. נציג המסלול מעדכן אותן פעם בשבוע.") + "</p></section>";
+    if (!html) html = '<section class="card"><p class="empty">' + (tasks.length ? "אין מטלות פתוחות כרגע." : "עוד לא נוספו מטלות.") + "</p></section>";
+    if (data.moodleTasks) html += '<p class="hint" style="margin:0">המטלות מתעדכנות אוטומטית מ-Moodle, לפי הקבוצות של נציג המסלול. מטלה של קבוצת תרגול אחרת אולי לא תופיע כאן.</p>';
     if (past.length) html += '<div><button type="button" class="linkbtn" id="toggle-past">' + (ui.showPastTasks ? "הסתרת מטלות שמועדן עבר" : "הצגת מטלות שמועדן עבר (" + past.length + ")") + "</button></div>";
     document.getElementById("tasks-main").innerHTML = html;
     renderThresholds();
