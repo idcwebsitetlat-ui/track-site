@@ -2,7 +2,7 @@
  * אתר המסלול: השרת (Google Apps Script)
  *
  * שלוש פעולות, כולן ב-POST עם גוף JSON (Content-Type: text/plain, כדי שהדפדפן לא ישלח בקשת preflight):
- *   {action: "login",   first, last}                     → {ok, token, name} או {ok:false, error}
+ *   {action: "login",   first, last}                     → {ok, token, name, admin} או {ok:false, error}
  *   {action: "content", token}                           → {ok, tabs, settings}
  *   {action: "inquiry", token, course, topic, details, anon, consent} → {ok, id, waNumber, waText}
  *
@@ -59,7 +59,18 @@ function login_(req) {
     Utilities.sleep(700);
     return { ok: false, error: 'השם לא מופיע ברשימת המסלול. בדקו את האיות, ואם זה לא עוזר, כתבו לנציג.' };
   }
-  return { ok: true, token: makeToken_(match), name: match };
+  var admin = isAdmin_(match);
+  return { ok: true, token: makeToken_(match, admin), name: match, admin: admin };
+}
+
+// מנהל = "כן" בעמודה "מנהל" בלשונית סטודנטים. המנהל רואה באתר כלים נוספים (סיכום שבועי)
+function isAdmin_(name) {
+  var values = privateSheet_().getSheetByName('סטודנטים').getDataRange().getValues();
+  var col = values[0].map(function (h) { return String(h).trim(); }).indexOf('מנהל');
+  if (col === -1) return false;
+  return values.slice(1).some(function (r) {
+    return String(r[0]).trim() === name && String(r[col]).trim() === 'כן';
+  });
 }
 
 function readStudents_() {
@@ -94,9 +105,10 @@ function findStudent_(input, students) {
 
 // ---------- אסימון כניסה ----------
 
-function makeToken_(name) {
+function makeToken_(name, admin) {
   var payload = Utilities.base64EncodeWebSafe(JSON.stringify({
     n: name,
+    a: admin ? 1 : 0,
     exp: Date.now() + TOKEN_DAYS * 864e5
   }), Utilities.Charset.UTF_8);
   return payload + '.' + sign_(payload);

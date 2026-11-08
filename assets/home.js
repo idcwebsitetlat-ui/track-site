@@ -5,7 +5,7 @@
   var VIEWS = ["updates", "week", "tasks", "contacts", "links", "tutoring"];
   var TITLES = { updates: "עדכונים", week: "מועדים", tasks: "מטלות ותנאי סף", contacts: "אנשי קשר", links: "קישורים", tutoring: "שיעורים פרטיים" };
   var data = null;
-  var ui = { weekFilter: "all", contactFilter: "all", linkFilter: "all", showPastTasks: false };
+  var ui = { weekFilter: "all", contactFilter: "all", linkFilter: "all", showPastTasks: false, summaryRange: "next7" };
 
   /* ---------- ניווט בין המסכים ---------- */
 
@@ -137,6 +137,7 @@
     document.getElementById("updates-main").innerHTML = main.join("");
 
     var side = [];
+    if (s && s.admin) side.push(summaryCard());
     var all = upcoming(events());
     var exam = all.filter(function (e) { return e.kind === "exam" && e.date >= todayIso; })[0];
     if (exam) {
@@ -165,8 +166,101 @@
         return '<li class="change"><span class="kind">' + esc(c.kind) + " · " + esc(S.dayName(c.date)) + ", " + esc(S.shortDate(c.date)) +
           (c.start ? ", " + esc(c.start) + (c.end ? "–" + esc(c.end) : "") : "") + "</span>" +
           "<span>" + esc(c.title) + (c.type ? " (" + esc(c.type) + ")" : "") + "</span>" +
-          '<span class="meta" style="color:inherit;opacity:.85">' + (c.location ? esc(c.location) + ". " : "") + (c.regular ? "בדרך כלל: " + esc(c.regular) : "") + "</span></li>";
+          '<span class="meta" style="color:inherit;opacity:.85">' + (c.location ? esc(c.location) + ". " : "") + (c.regular ? "בדרך כלל: " + esc(c.regular) : "") + "</span>" +
+          whereBox(c.location) + "</li>";
       }).join("") + '</ul><p class="hint" style="color:inherit;margin:.75rem 0 0">מתוך היומן של תחנת המידע. שינויים בקבוצות תרגול אחרות לא תמיד מופיעים כאן, אז כדאי לבדוק גם ב-Moodle.</p></section>';
+  }
+
+  /* ---------- איפה החדר ---------- */
+
+  // הבניין של חדר: לפי שם הבניין שמופיע בטקסט (כמו ביומן של תחנת המידע), ואם אין, לפי האותיות שבתחילת קוד החדר (A318 → A)
+  function building(text) {
+    text = String(text || "").trim();
+    if (!text || /^zoom$/i.test(text) || text === "טרם נקבע") return null;
+    var rows = tab("בניינים").filter(function (b) { return b["שם הבניין"]; });
+    var byName = rows.filter(function (b) { return text.indexOf(b["שם הבניין"]) !== -1; })[0];
+    if (byName) return byName;
+    var m = text.toUpperCase().match(/^([A-Z]+)[.\d]/);
+    if (!m) return null;
+    return rows.filter(function (b) {
+      return String(b["אותיות בחדר"] || "").toUpperCase().split(/[\s,]+/).indexOf(m[1]) !== -1;
+    })[0] || null;
+  }
+
+  function whereHtml(b, room) {
+    var map = S.safeUrl(b["קישור למפה"]) || S.safeUrl(setting("קישור למפת הקמפוס"));
+    return "<p>" + (room ? "החדר " + esc(room) + " נמצא" : "זה") + " בבניין <b>" + esc(b["שם הבניין"]) + "</b>.</p>" +
+      (b["איך מגיעים"] ? "<p>" + esc(b["איך מגיעים"]) + "</p>" : "") +
+      (map ? '<p><a href="' + esc(map) + '" target="_blank" rel="noopener">פתיחה במפה</a></p>' : "");
+  }
+
+  function whereBox(text) {
+    var b = building(text);
+    if (!b) return "";
+    var room = String(text).trim().split(/\s+/)[0];
+    if (!/[0-9]/.test(room)) room = "";
+    return '<details class="where"><summary>איפה זה?</summary>' + whereHtml(b, room) + "</details>";
+  }
+
+  function renderRoomLookup() {
+    var el = document.getElementById("room-lookup");
+    if (!el) return;
+    if (!tab("בניינים").length) { el.hidden = true; return; }
+    el.hidden = false;
+    el.innerHTML = '<h2 class="t2" id="h-room">איפה החדר?</h2>' +
+      '<form class="room-form" id="room-form"><label class="sr-only" for="room-q">קוד החדר</label>' +
+      '<input class="input" id="room-q" dir="ltr" autocomplete="off" placeholder="למשל A318 או C.L05">' +
+      '<button class="btn" type="submit">חיפוש</button></form><div id="room-out" aria-live="polite"></div>';
+  }
+
+  /* ---------- סיכום שבועי (רק למנהל) ---------- */
+
+  var SITE_URL = "https://idcwebsitetlat-ui.github.io/track-site/";
+
+  function summaryRange() {
+    var from = S.today();
+    if (ui.summaryRange === "week") from.setDate(from.getDate() + (7 - from.getDay()) % 7);
+    var to = new Date(from.getTime()); to.setDate(to.getDate() + 6);
+    return { from: S.iso(from), to: S.iso(to) };
+  }
+
+  function summaryText() {
+    var r = summaryRange();
+    var inRange = function (e) { return e.date <= r.to && (e.end || e.date) >= r.from; };
+    var all = events().filter(inRange);
+    var line = function (e) {
+      return "• " + S.dayName(e.date) + " " + S.shortDate(e.date) + (e.end ? "–" + S.shortDate(e.end) : "") + (e.time ? ", " + e.time : "") +
+        " · " + [e.course && e.course !== "כללי" ? e.course : "", e.title].filter(Boolean).join(", ");
+    };
+    var parts = ["*סיכום שבועי · " + S.shortDate(r.from) + " עד " + S.shortDate(r.to) + "*"];
+    var group = function (title, list) { if (list.length) parts.push("*" + title + "*\n" + list.join("\n")); };
+    group("מבחנים", all.filter(function (e) { return e.kind === "exam"; }).map(line));
+    group("הגשות", all.filter(function (e) { return e.kind === "sub"; }).map(line));
+    group("שינויים בשיעורים", (data.lessonChanges || []).filter(function (c) { return c.date >= r.from && c.date <= r.to; }).map(function (c) {
+      return "• " + S.dayName(c.date) + " " + S.shortDate(c.date) + (c.start ? ", " + c.start : "") + " · " + c.title + ": " + c.kind +
+        (c.location && c.kind !== "בזום" ? " (" + c.location.split(/\s+/)[0] + ")" : "");
+    }));
+    group("חגים וחופשות", all.filter(function (e) { return e.kind === "hol"; }).map(line));
+    group("אירועים", all.filter(function (e) { return e.kind === "event" || e.kind === "track"; }).map(line));
+    if (parts.length === 1) parts.push("שבוע שקט: אין מבחנים, הגשות או שינויים בשיעורים.");
+    var exam = events().filter(function (e) { return e.kind === "exam" && e.date > r.to; })[0];
+    if (exam) parts.push("עוד " + S.daysUntil(exam.date) + " ימים למבחן הקרוב (" + [exam.course, S.shortDate(exam.date)].filter(Boolean).join(", ") + ").");
+    parts.push("כל הפרטים באתר המסלול: " + SITE_URL);
+    return parts.join("\n\n");
+  }
+
+  function summaryCard() {
+    var text = summaryText();
+    return '<section class="card admin" aria-labelledby="h-sum"><p class="eyebrow">רק אתה רואה את זה</p>' +
+      '<h2 class="t2" id="h-sum">סיכום שבועי לקבוצה</h2>' +
+      '<div class="chips" role="group" aria-label="טווח הסיכום">' +
+      [["next7", "7 הימים הקרובים"], ["week", "משבוע ראשון הקרוב"]].map(function (f) {
+        return '<button type="button" class="chip" data-sum="' + f[0] + '" aria-pressed="' + ((ui.summaryRange || "next7") === f[0]) + '">' + f[1] + "</button>";
+      }).join("") + "</div>" +
+      '<label class="sr-only" for="sum-text">טקסט הסיכום</label><textarea class="input sum-text" id="sum-text" dir="rtl">' + esc(text) + "</textarea>" +
+      '<p class="hint">אפשר לערוך את הטקסט לפני ההעתקה. כוכביות הופכות להדגשה בוואטסאפ.</p>' +
+      '<div class="row-btns"><button type="button" class="btn" id="sum-copy">העתקה</button>' +
+      '<a class="btn ghost" id="sum-wa" href="https://wa.me/?text=' + encodeURIComponent(text) + '" target="_blank" rel="noopener">פתיחה בוואטסאפ</a></div></section>';
   }
 
   /* ---------- מועדים ---------- */
@@ -187,7 +281,7 @@
         return '<li><div class="d"><b class="num">' + dd.getDate() + "</b><span>" + esc(S.dayName(e.date)) + "</span></div>" +
           '<div><div class="item-head">' + tag(e) + "<b>" + esc(e.title) + "</b></div>" +
           '<div class="meta">' + [e.end ? "עד " + esc(S.shortDate(e.end)) : "", e.time ? esc(e.time) : "", e.course && e.course !== "כללי" ? esc(e.course) : "", e.place ? esc(e.place) : ""].filter(Boolean).join(" · ") + "</div>" +
-          (e.notes ? '<div class="meta">' + esc(e.notes) + "</div>" : "") + "</div>" +
+          (e.notes ? '<div class="meta">' + esc(e.notes) + "</div>" : "") + (e.kind !== "sub" ? whereBox(e.place) : "") + "</div>" +
           '<a class="cal" href="' + esc(gcal(e)) + '" target="_blank" rel="noopener" aria-label="הוספה ליומן: ' + esc(e.title) + '">הוספה ליומן</a></li>';
       }).join("") + "</ul></section>";
     }).join("");
@@ -221,7 +315,10 @@
     shown.forEach(function (t) { var c = t["קורס"] || "כללי"; (byCourse[c] = byCourse[c] || []).push(t); });
 
     var html = Object.keys(byCourse).map(function (c) {
-      return '<section class="card"><h2 class="course-h">' + esc(c) + '</h2><ul class="list">' + byCourse[c].map(function (t) {
+      var course = tab("קורסים").filter(function (k) { return k["שם הקורס"] === c; })[0];
+      var drive = course && S.safeUrl(course["קישור לדרייב"]);
+      return '<section class="card"><div class="course-row"><h2 class="course-h">' + esc(c) + "</h2>" +
+        (drive ? '<a class="linkbtn" href="' + esc(drive) + '" target="_blank" rel="noopener">חומרים בדרייב</a>' : "") + '</div><ul class="list">' + byCourse[c].map(function (t) {
         var n = S.daysUntil(t["דדליין"]);
         var link = S.safeUrl(t["קישור"]);
         return '<li><div class="item-head"><b>' + esc(t["שם המטלה"]) + "</b>" + (t["סוג"] ? '<span class="tag sub">' + esc(t["סוג"]) + "</span>" : "") +
@@ -316,7 +413,12 @@
         (r["תיאור"] ? '<p style="margin:0">' + esc(r["תיאור"]) + "</p>" : "") +
         '<div class="row-btns"><a class="btn ghost" href="' + esc(S.safeUrl(r["קישור"])) + '" target="_blank" rel="noopener">פתיחה</a></div></section>';
     }).join("");
-    document.getElementById("links").innerHTML = html || '<p class="empty">עוד אין קישורים. נציג המסלול יוסיף אותם בקרוב.</p>';
+    var drive = tab("קורסים").filter(function (c) { return S.safeUrl(c["קישור לדרייב"]); });
+    var driveHtml = drive.length ? '<section class="card soft drive"><h2 class="t2">חומרים בדרייב לפי קורס</h2><ul class="drive-list">' + drive.map(function (c) {
+      return '<li><a class="btn ghost" href="' + esc(S.safeUrl(c["קישור לדרייב"])) + '" target="_blank" rel="noopener">' + esc(c["שם הקורס"] || c["קוד"]) + "</a></li>";
+    }).join("") + "</ul></section>" : "";
+    document.getElementById("links").innerHTML = (driveHtml + html) || '<p class="empty">עוד אין קישורים. נציג המסלול יוסיף אותם בקרוב.</p>';
+    renderRoomLookup();
   }
 
   /* ---------- שיעורים פרטיים ---------- */
@@ -352,6 +454,19 @@
     document.getElementById("updates-side").innerHTML = "";
   });
 
+  document.addEventListener("input", function (e) {
+    if (e.target.id === "sum-text") document.getElementById("sum-wa").href = "https://wa.me/?text=" + encodeURIComponent(e.target.value);
+  });
+
+  document.addEventListener("submit", function (e) {
+    if (e.target.id !== "room-form") return;
+    e.preventDefault();
+    var q = document.getElementById("room-q").value.trim();
+    var b = building(q);
+    document.getElementById("room-out").innerHTML = !q ? "" : b ? '<div class="where-out">' + whereHtml(b, /[0-9]/.test(q) ? q.toUpperCase() : "") + "</div>" :
+      '<p class="hint">לא מצאתי בניין לחדר הזה. בדקו את הקוד ביומן של תחנת המידע, למשל A318 או SL401.</p>';
+  });
+
   document.addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b || !data) return;
@@ -359,6 +474,8 @@
     else if (b.dataset.contact) { ui.contactFilter = b.dataset.contact; renderContacts(); document.querySelector('[data-contact="' + CSS.escape(ui.contactFilter) + '"]').focus(); }
     else if (b.dataset.link) { ui.linkFilter = b.dataset.link; renderLinks(); document.querySelector('[data-link="' + CSS.escape(ui.linkFilter) + '"]').focus(); }
     else if (b.dataset.copy) { S.copy(b.dataset.copy, "המייל הועתק"); }
+    else if (b.dataset.sum) { ui.summaryRange = b.dataset.sum; renderUpdates(); document.querySelector('[data-sum="' + ui.summaryRange + '"]').focus(); }
+    else if (b.id === "sum-copy") { S.copy(document.getElementById("sum-text").value, "הסיכום הועתק. אפשר להדביק בקבוצה"); }
     else if (b.id === "toggle-past") { ui.showPastTasks = !ui.showPastTasks; renderTasks(); document.getElementById("toggle-past").focus(); }
     else if (b.dataset.th) {
       var r = tab("תנאי סף")[+b.dataset.th];

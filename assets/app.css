@@ -196,3 +196,26 @@ textarea.input{min-height:8rem;resize:vertical}
   .track{grid-template-columns:1fr}
   .stepper{justify-content:flex-start}
 }
+
+/* איפה החדר */
+.where{margin-top:.35rem}
+.where summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:44px;display:inline-flex;align-items:center;list-style:none}
+.where summary::-webkit-details-marker{display:none}
+.where summary::after{content:"";width:.45em;height:.45em;border-inline-start:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);margin-inline-start:.5em;transition:transform .18s var(--ease)}
+.where[open] summary::after{transform:rotate(135deg)}
+.where p,.where-out p{margin:.2rem 0 0}
+.where-out{margin-top:.8rem;padding:.8rem 1rem;border-radius:12px;background:var(--accent-soft)}
+.room-card{margin-bottom:1.1rem;max-width:44rem}
+.room-form{display:flex;gap:.6rem;flex-wrap:wrap}
+.room-form .input{flex:1 1 12rem;min-width:0}
+
+/* חומרים בדרייב */
+.drive{grid-column:1/-1}
+.drive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.6rem}
+.course-row{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+
+/* סיכום שבועי למנהל */
+.card.admin{border:1px dashed var(--accent)}
+.card.admin .chips{margin:.2rem 0 .8rem}
+textarea.sum-text{min-height:14rem;font-size:.95rem;line-height:1.55}
+@media (prefers-reduced-motion:reduce){.where summary::after{transition:none}}

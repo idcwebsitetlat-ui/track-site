@@ -6,6 +6,7 @@
   python3 tools/dev_server.py        ואז  http://localhost:8000
 
 בפיתוח כל שם פרטי ושם משפחה מתקבלים בכניסה, חוץ מ"ישראל ישראלי" (כדי לבדוק דחייה).
+"אלון מורב" נכנס כמנהל, כדי לבדוק את הכלים של המנהל.
 פניות לא נשמרות ולא נשלח מייל.
 """
 import os, json, datetime as dt, http.server, socketserver
@@ -91,7 +92,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             elif (first, last) == ("ישראל", "ישראלי"):
                 res = {"ok": False, "error": "השם לא מופיע ברשימת המסלול. בדקו את האיות, ואם זה לא עוזר, כתבו לנציג."}
             else:
-                res = {"ok": True, "token": "dev-token", "name": first + " " + last}
+                res = {"ok": True, "token": "dev-token", "name": first + " " + last, "admin": (first, last) == ("אלון", "מורב")}
         elif not req.get("token"):
             res = {"ok": False, "error": "login", "message": "צריך להיכנס מחדש."}
         elif act == "content":

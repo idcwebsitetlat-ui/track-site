@@ -30,7 +30,7 @@
     btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> בודקים את השם…';
     Site.api("login", { first: first.value, last: last.value }).then(function (res) {
       if (!res.ok) throw new Error(res.error);
-      Site.store("track-session", { token: res.token, name: res.name, at: Date.now() });
+      Site.store("track-session", { token: res.token, name: res.name, admin: !!res.admin, at: Date.now() });
       var next = "index.html";
       try { next = sessionStorage.getItem("track-next") || next; sessionStorage.removeItem("track-next"); } catch (x) {}
       if (!/^(index|inquiry)\.html/.test(next)) next = "index.html";
