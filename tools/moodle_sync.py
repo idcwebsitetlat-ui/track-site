@@ -27,13 +27,22 @@ TZ = ZoneInfo("Asia/Jerusalem")
 HEAD = ["קורס", "שם המטלה", "סוג", "מה נדרש", "דדליין", "שעה", "אופן הגשה", "נספר לתנאי סף", "קישור", "מזהה Moodle"]
 
 
+# "recentupcoming" מחזיר רק מטלות עתידיות, אז מטלה שהדדליין שלה כבר עבר לא מגיעה ממנו.
+# לכן קוראים גם את החודש הנוכחי ואת החודש הבא, ומאחדים לפי המזהה
+PRESETS = ["recentupcoming", "monthnow", "monthnext"]
+
+
 def fetch():
-    url = open(URL_FILE, encoding="utf-8").read().strip()
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Macintosh) track-site moodle sync"})
-    text = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
-    if "BEGIN:VCALENDAR" not in text:
-        raise RuntimeError("הקישור של Moodle לא החזיר יומן. אולי פג תוקפו (החלפת סיסמה או שנה חדשה).")
-    return text
+    base = open(URL_FILE, encoding="utf-8").read().strip()
+    texts = []
+    for preset in PRESETS:
+        url = re.sub(r"preset_time=[a-z]+", "preset_time=" + preset, base)
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Macintosh) track-site moodle sync"})
+        text = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
+        if "BEGIN:VCALENDAR" not in text:
+            raise RuntimeError("הקישור של Moodle לא החזיר יומן. אולי פג תוקפו (החלפת סיסמה או שנה חדשה).")
+        texts.append(text)
+    return "\n".join(texts)
 
 
 def parse(text):
@@ -96,6 +105,8 @@ def main():
     feed = parse(fetch())
     seen = set()
     for e in feed:
+        if e["uid"] in seen:
+            continue
         course = by_code.get(e["code"], e["course"])
         seen.add(e["uid"])
         if e["uid"] in by_uid:
