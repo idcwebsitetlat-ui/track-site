@@ -1,0 +1,17 @@
+{
+  "name": "אתר המסלול: כלכלה, מנהל עסקים וחשבונאות",
+  "short_name": "המסלול",
+  "description": "מועדים, מטלות, שינויים בשיעורים ותקנונים של המסלול ברייכמן",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F3EEE3",
+  "theme_color": "#F3EEE3",
+  "icons": [
+    {"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

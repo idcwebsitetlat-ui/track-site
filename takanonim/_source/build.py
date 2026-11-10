@@ -190,6 +190,10 @@ def head(title, desc):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{html.escape(title)}: תמצית | אתר המסלול</title>
 <meta name="description" content="{html.escape(desc)}">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" href="../assets/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#F3EEE3">
 {FONTS}
 <style>{CSS}{THEME}</style>
 </head>

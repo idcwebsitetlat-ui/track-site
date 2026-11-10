@@ -72,6 +72,11 @@ def page(name, title, desc, body, current=None, scripts=(), nav=True, logout=Tru
 <meta name="description" content="{desc}">
 <meta name="theme-color" content="#F3EEE3">
 <meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="המסלול">
 {guard_js}{FONTS}
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/app.css">

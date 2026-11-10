@@ -132,6 +132,34 @@
     }
   }
 
+  // התקנה כיישומון: ה-service worker, והאירוע של Chrome/Android שמאפשר להציג כפתור "התקנה" משלנו
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+  var installPrompt = null;
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    installPrompt = e;
+    document.dispatchEvent(new Event("track-install-ready"));
+  });
+  window.addEventListener("appinstalled", function () { installPrompt = null; store("track-install-hidden", true); });
+
+  function installState() {
+    var standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    if (standalone || store("track-install-hidden")) return null;
+    if (installPrompt) return "prompt";
+    var ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return "ios";
+    return null;
+  }
+  function install() {
+    if (!installPrompt) return Promise.resolve(false);
+    var p = installPrompt;
+    installPrompt = null;
+    p.prompt();
+    return p.userChoice.then(function (c) { return c.outcome === "accepted"; });
+  }
+
   // כפתור "יציאה" בכותרת
   document.addEventListener("click", function (e) {
     if (e.target.closest && e.target.closest("[data-logout]")) logout();
@@ -141,6 +169,7 @@
     api: api, session: session, requireLogin: requireLogin, logout: logout, loadContent: loadContent,
     store: store, esc: esc, safeUrl: safeUrl, toast: toast, copy: copy,
     parseDate: parseDate, iso: iso, today: today, daysUntil: daysUntil, shortDate: shortDate,
-    dayName: dayName, relDays: relDays, DAYS: DAYS, MONTHS: MONTHS
+    dayName: dayName, relDays: relDays, DAYS: DAYS, MONTHS: MONTHS,
+    installState: installState, install: install
   };
 })();

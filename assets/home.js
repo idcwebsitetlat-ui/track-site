@@ -138,6 +138,8 @@
 
     var side = [];
     if (s && s.admin) side.push(summaryCard());
+    var inst = S.installState();
+    if (inst) side.push(installCard(inst));
     var all = upcoming(events());
     var exam = all.filter(function (e) { return e.kind === "exam" && e.date >= todayIso; })[0];
     if (exam) {
@@ -212,6 +214,17 @@
       '<input class="input" id="room-q" dir="ltr" autocomplete="off" placeholder="למשל A318 או C.L05">' +
       '<button class="btn" type="submit">חיפוש</button></form><div id="room-out" aria-live="polite"></div>';
   }
+
+  /* ---------- התקנה כיישומון ---------- */
+
+  function installCard(kind) {
+    return '<section class="card soft install" aria-labelledby="h-inst"><h2 class="t2" id="h-inst">האתר כיישומון בטלפון</h2>' +
+      (kind === "prompt"
+        ? '<p style="margin:0">אייקון במסך הבית שנפתח ישר לעדכונים, בלי לחפש את הקישור.</p><div class="row-btns"><button type="button" class="btn" id="inst-go">התקנה</button>'
+        : '<p style="margin:0">בספארי: לוחצים על כפתור השיתוף <span aria-hidden="true">(ריבוע עם חץ)</span>, ואז על "הוספה למסך הבית".</p><div class="row-btns">') +
+      '<button type="button" class="linkbtn" id="inst-hide">לא עכשיו</button></div></section>';
+  }
+  document.addEventListener("track-install-ready", function () { if (data) renderUpdates(); });
 
   /* ---------- סיכום שבועי (רק למנהל) ---------- */
 
@@ -475,6 +488,8 @@
     else if (b.dataset.link) { ui.linkFilter = b.dataset.link; renderLinks(); document.querySelector('[data-link="' + CSS.escape(ui.linkFilter) + '"]').focus(); }
     else if (b.dataset.copy) { S.copy(b.dataset.copy, "המייל הועתק"); }
     else if (b.dataset.sum) { ui.summaryRange = b.dataset.sum; renderUpdates(); document.querySelector('[data-sum="' + ui.summaryRange + '"]').focus(); }
+    else if (b.id === "inst-go") { S.install().then(function (ok) { if (ok) S.toast("האתר הותקן. אפשר לפתוח אותו מהמסך הראשי"); renderUpdates(); }); }
+    else if (b.id === "inst-hide") { S.store("track-install-hidden", true); renderUpdates(); }
     else if (b.id === "sum-copy") { S.copy(document.getElementById("sum-text").value, "הסיכום הועתק. אפשר להדביק בקבוצה"); }
     else if (b.id === "toggle-past") { ui.showPastTasks = !ui.showPastTasks; renderTasks(); document.getElementById("toggle-past").focus(); }
     else if (b.dataset.th) {
