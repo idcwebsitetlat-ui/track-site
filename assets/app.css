@@ -219,3 +219,8 @@ textarea.input{min-height:8rem;resize:vertical}
 .card.admin .chips{margin:.2rem 0 .8rem}
 textarea.sum-text{min-height:14rem;font-size:.95rem;line-height:1.55}
 @media (prefers-reduced-motion:reduce){.where summary::after{transition:none}}
+
+/* מפת הקמפוס (FINDRUNi מוטמע) */
+.campus-frame{border:1px solid var(--rule);border-radius:16px;overflow:hidden;background:var(--surface);height:min(72vh,46rem);min-height:26rem}
+.campus-frame iframe{display:block;width:100%;height:100%;border:0}
+.campus-credit{margin-top:.75rem}

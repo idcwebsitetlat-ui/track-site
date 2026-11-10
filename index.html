@@ -18,7 +18,7 @@
 <a class="skip" href="#main">דילוג לתוכן</a>
 <header class="site-top"><div class="in">
 <a class="brand" href="index.html">כלכלה, מנהל עסקים וחשבונאות</a>
-<nav class="site-nav" aria-label="ניווט ראשי"><ul><li><a href="index.html#updates" aria-current="page">עדכונים</a></li><li><a href="index.html#week">מועדים</a></li><li><a href="index.html#tasks">מטלות</a></li><li><a href="index.html#contacts">אנשי קשר</a></li><li><a href="takanonim/index.html">תקנונים</a></li><li><a href="index.html#links">קישורים</a></li><li><a href="index.html#tutoring">שיעורים פרטיים</a></li><li><a href="inquiry.html">פניות</a></li></ul></nav>
+<nav class="site-nav" aria-label="ניווט ראשי"><ul><li><a href="index.html#updates" aria-current="page">עדכונים</a></li><li><a href="index.html#week">מועדים</a></li><li><a href="index.html#tasks">מטלות</a></li><li><a href="index.html#contacts">אנשי קשר</a></li><li><a href="takanonim/index.html">תקנונים</a></li><li><a href="index.html#links">קישורים</a></li><li><a href="index.html#campus">מפת הקמפוס</a></li><li><a href="index.html#tutoring">שיעורים פרטיים</a></li><li><a href="inquiry.html">פניות</a></li></ul></nav>
 <button type="button" class="logout" data-logout>יציאה</button>
 <button type="button" class="a11y-btn" id="a11y-open" aria-label="תפריט נגישות" aria-expanded="false" aria-controls="a11y-panel"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"></circle><path d="M4 8l8 1 8-1"></path><path d="M12 9v5l-3 7"></path><path d="M12 14l3 7"></path></svg></button>
 </div></header>
@@ -81,6 +81,13 @@
 <section class="card room-card" id="room-lookup" aria-labelledby="h-room" hidden></section>
 <div class="chips" role="group" aria-label="סינון לפי סוג" id="link-filters"></div>
 <div class="grid stagger" id="links"></div>
+</section>
+
+<section class="view" data-view="campus" aria-labelledby="h-campus" tabindex="-1" hidden>
+<h1 class="h1" id="h-campus">מפת הקמפוס</h1>
+<p class="lead">מפה תלת־ממדית של רייכמן: בניינים, אולמות, אוכל, שירותים וחניה. אפשר לחפש כיתה לפי הקוד שלה, למשל A318.</p>
+<div class="campus-frame"><iframe src="https://findruni.vercel.app/?lang=he" title="מפת הקמפוס FINDRUNi" loading="lazy" allow="geolocation" referrerpolicy="no-referrer"></iframe></div>
+<p class="hint campus-credit">המפה היא <a href="https://findruni.vercel.app/?lang=he" target="_blank" rel="noopener">FINDRUNi</a>, פרויקט עצמאי שלא שייך לאתר המסלול. נתוני המפה מ-OpenStreetMap. <a href="https://findruni.vercel.app/?lang=he" target="_blank" rel="noopener">פתיחה במסך מלא</a></p>
 </section>
 
 <section class="view" data-view="tutoring" aria-labelledby="h-tutoring" tabindex="-1" hidden>

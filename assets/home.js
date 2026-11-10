@@ -2,8 +2,8 @@
 (function () {
   if (!Site.requireLogin()) return;
   var S = Site, esc = S.esc;
-  var VIEWS = ["updates", "week", "tasks", "contacts", "links", "tutoring"];
-  var TITLES = { updates: "עדכונים", week: "מועדים", tasks: "מטלות ותנאי סף", contacts: "אנשי קשר", links: "קישורים", tutoring: "שיעורים פרטיים" };
+  var VIEWS = ["updates", "week", "tasks", "contacts", "links", "campus", "tutoring"];
+  var TITLES = { updates: "עדכונים", week: "מועדים", tasks: "מטלות ותנאי סף", contacts: "אנשי קשר", links: "קישורים", campus: "מפת הקמפוס", tutoring: "שיעורים פרטיים" };
   var data = null;
   var ui = { weekFilter: "all", contactFilter: "all", linkFilter: "all", showPastTasks: false, summaryRange: "next7" };
 
@@ -191,7 +191,7 @@
     var map = S.safeUrl(b["קישור למפה"]) || S.safeUrl(setting("קישור למפת הקמפוס"));
     return "<p>" + (room ? "החדר " + esc(room) + " נמצא" : "זה") + " בבניין <b>" + esc(b["שם הבניין"]) + "</b>.</p>" +
       (b["איך מגיעים"] ? "<p>" + esc(b["איך מגיעים"]) + "</p>" : "") +
-      (map ? '<p><a href="' + esc(map) + '" target="_blank" rel="noopener">פתיחה במפה</a></p>' : "");
+      "<p>" + (map ? '<a href="' + esc(map) + '" target="_blank" rel="noopener">פתיחה במפה</a>' : '<a href="#campus">למפת הקמפוס</a>') + "</p>";
   }
 
   function whereBox(text) {

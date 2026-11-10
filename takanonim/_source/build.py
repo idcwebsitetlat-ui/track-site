@@ -145,7 +145,7 @@ def fmt(s):
     return re.sub(r"\*\*(.+?)\*\*", r"<mark>\1</mark>", s)
 
 NAV=[("../index.html#updates","עדכונים"),("../index.html#week","מועדים"),("../index.html#tasks","מטלות"),("../index.html#contacts","אנשי קשר"),
-     ("index.html","תקנונים"),("../index.html#links","קישורים"),("../index.html#tutoring","שיעורים פרטיים"),("../inquiry.html","פניות")]
+     ("index.html","תקנונים"),("../index.html#links","קישורים"),("../index.html#campus","מפת הקמפוס"),("../index.html#tutoring","שיעורים פרטיים"),("../inquiry.html","פניות")]
 A11Y_ICON='<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"></circle><path d="M4 8l8 1 8-1"></path><path d="M12 9v5l-3 7"></path><path d="M12 14l3 7"></path></svg>'
 SITE_TOP=('<a class="skip" href="#main">דילוג לתוכן</a>'
   '<header class="site-top"><div class="in">'

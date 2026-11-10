@@ -20,7 +20,7 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
 
 NAV = [("index.html#updates", "עדכונים", "updates"), ("index.html#week", "מועדים", "week"),
        ("index.html#tasks", "מטלות", "tasks"), ("index.html#contacts", "אנשי קשר", "contacts"),
-       ("takanonim/index.html", "תקנונים", "regs"), ("index.html#links", "קישורים", "links"),
+       ("takanonim/index.html", "תקנונים", "regs"), ("index.html#links", "קישורים", "links"), ("index.html#campus", "מפת הקמפוס", "campus"),
        ("index.html#tutoring", "שיעורים פרטיים", "tutoring"), ("inquiry.html", "פניות", "inquiry")]
 
 A11Y_ICON = ('<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
