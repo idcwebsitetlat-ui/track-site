@@ -193,6 +193,8 @@ textarea.input{min-height:8rem;resize:vertical}
 @media (max-width:560px){
   .site-top .brand{white-space:normal;font-size:1rem;line-height:1.25;min-width:0}
   .logout{padding:0 .75rem}
+  .chips{gap:.35rem}
+  .chip{padding:0 .75rem;font-size:.92rem}
   .track{grid-template-columns:1fr}
   .stepper{justify-content:flex-start}
 }

@@ -95,9 +95,9 @@ footer p{margin:0 0 .5rem}
 .site-top{background:var(--surface);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:10}
 .site-top .in{max-width:75rem;margin:0 auto;padding:.6rem 1.25rem;display:flex;align-items:center;gap:1rem}
 .brand{font-family:"Frank Ruhl Libre","David",serif;font-weight:700;font-size:1.15rem;color:var(--ink);text-decoration:none;white-space:nowrap}
-.site-nav{flex:1;min-width:0;overflow-x:auto}
-.site-nav ul{list-style:none;margin:0;padding:0;display:flex;gap:.25rem}
-.site-nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 .8rem;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:600;white-space:nowrap}
+.site-nav{flex:1;min-width:0}
+.site-nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.15rem}
+.site-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 .65rem;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:600;font-size:.95rem;white-space:nowrap}
 .site-nav a[aria-current="page"]{background:var(--accent-soft);color:var(--ink)}
 .a11y-btn{flex:none;width:44px;height:44px;border-radius:999px;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
 .a11y-panel{position:fixed;inset-inline-end:1rem;top:4.5rem;width:min(22rem,calc(100vw - 2rem));background:var(--surface);color:var(--text);border:1px solid var(--rule);border-radius:16px;padding:1rem;z-index:30;box-shadow:0 12px 32px rgba(0,0,0,.18)}
@@ -122,7 +122,9 @@ html.a11y-still *,html.a11y-still *::before,html.a11y-still *::after{animation:n
 html.a11y-cursor,html.a11y-cursor *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'%3E%3Cpath d='M4 2l16 9-7 2-3 7z' fill='%23000' stroke='%23fff' stroke-width='1.5'/%3E%3C/svg%3E") 4 2,auto!important}
 .brand{flex:1}
 .site-nav{flex:0 1 auto}
-@media (max-width:900px){.site-top .in{flex-wrap:wrap;row-gap:.25rem}.site-nav{order:3;flex-basis:100%;margin-inline:-.5rem}}
+/* הניווט תמיד נכנס במסך, בלי גלילה הצידה: שורה אחת במחשב רחב, שורה נפרדת שנשברת בטאבלט, ורשת של שלוש עמודות בטלפון */
+@media (max-width:1180px){.site-top .in{flex-wrap:wrap;row-gap:.25rem}.site-nav{order:3;flex-basis:100%}}
+@media (max-width:560px){.site-top{position:static}.site-top .in{padding:.5rem .75rem}.site-nav ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.25rem}.site-nav li{display:flex}.site-nav a{flex:1;padding:0 .3rem;font-size:.9rem;white-space:normal;text-align:center;line-height:1.15;background:var(--paper)}.site-nav a[aria-current="page"]{background:var(--accent-soft)}}
 @media print{.site-top,.site-foot,.a11y-panel,.skip{display:none}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 html{scroll-behavior:smooth}
