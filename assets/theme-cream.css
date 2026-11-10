@@ -28,3 +28,7 @@ a,.eyebrow,.btn.ghost,.linkbtn,.a11y-foot button,.where summary{color:var(--acce
 .a11y-btn{color:var(--ink)}
 html.a11y-contrast{--accent-ink:#FFE45C}
 html.a11y-contrast .a11y-btn{color:var(--accent)}
+
+/* כותרות ב-Rubik (חינמי, Google Fonts) במקום Frank Ruhl Libre */
+h1,h2,.dt,.brand,.h1,h2.t2,.countdown .big,.month>h2,.tl .d b,.course-h,.sent .id,.prose h2{font-family:"Rubik","Assistant",Arial,sans-serif;letter-spacing:-.01em}
+.h1{font-weight:800}

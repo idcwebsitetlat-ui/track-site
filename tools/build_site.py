@@ -16,7 +16,7 @@ open(os.path.join(ROOT, "assets/site.css"), "w", encoding="utf-8").write(
 
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-         '<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@700;900&display=swap" rel="stylesheet">')
+         '<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Rubik:wght@500;700;900&display=swap" rel="stylesheet">')
 
 NAV = [("index.html#updates", "עדכונים", "updates"), ("index.html#week", "מועדים", "week"),
        ("index.html#tasks", "מטלות", "tasks"), ("index.html#contacts", "אנשי קשר", "contacts"),
