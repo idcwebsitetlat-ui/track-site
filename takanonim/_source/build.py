@@ -136,9 +136,12 @@ html.a11y-cursor,html.a11y-cursor *{cursor:url("data:image/svg+xml,%3Csvg xmlns=
 html{scroll-behavior:smooth}
 """
 
+# ערכת הצבעים והגופן של האתר (קרם, דיו וכתום; כותרות ב-Rubik), משותפת עם דפי האתר הראשיים
+THEME = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "assets", "theme-cream.css"), encoding="utf-8").read()
+
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-         '<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@700;900&display=swap" rel="stylesheet">')
+         '<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Rubik:wght@500;700;900&display=swap" rel="stylesheet">')
 
 def fmt(s):
     s = html.escape(s, quote=False)
@@ -186,7 +189,7 @@ def head(title, desc):
 <title>{html.escape(title)}: תמצית | אתר המסלול</title>
 <meta name="description" content="{html.escape(desc)}">
 {FONTS}
-<style>{CSS}</style>
+<style>{CSS}{THEME}</style>
 </head>
 <body>
 {SITE_TOP}

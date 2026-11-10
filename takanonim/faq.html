@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>שאלות נפוצות: תמצית | אתר המסלול</title>
 <meta name="description" content="שאלות נפוצות על תקנוני אוניברסיטת רייכמן">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Rubik:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#EDF0EE; --surface:#FFFFFF; --ink:#1B2623; --text:#1B2623; --muted:#4F5E59;
@@ -126,6 +126,40 @@ html.a11y-cursor,html.a11y-cursor *{cursor:url("data:image/svg+xml,%3Csvg xmlns=
 @media print{.site-top,.site-foot,.a11y-panel,.skip{display:none}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 html{scroll-behavior:smooth}
+/* גרסת צבעים לבחינה: קרם, דיו שחור וכתום שרוף. נטען אחרי site.css ו-app.css ודורס רק צבעים */
+:root{
+  --paper:#F3EEE3; --surface:#FBF8F2; --ink:#111111; --text:#111111; --muted:#5A5650;
+  --rule:#DDD5C6; --accent:#D9541E; --accent-ink:#A93E17; --accent-soft:#F6DFD3; --on-accent:#111111;
+  --hl:#F4C9B4; --warn-bg:#F7E6C8; --warn-ink:#7A4A06;
+  --tag-exam-bg:#111111; --tag-exam:#F3EEE3;
+  --tag-sub-bg:#F6DFD3; --tag-sub:#A93E17;
+  --tag-hol-bg:#E4E3EE; --tag-hol:#3B3F72;
+  --tag-event-bg:#ECE5D6; --tag-event:#5A4A1E;
+  --tag-track-bg:#E9E1EC; --tag-track:#5E3570;
+  --shadow:0 1px 2px rgba(17,17,17,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111111; --surface:#1B1A18; --ink:#F3EEE3; --text:#F3EEE3; --muted:#B8B0A2;
+    --rule:#2E2B27; --accent:#E8703D; --accent-ink:#E8703D; --accent-soft:#3A2318; --on-accent:#111111;
+    --hl:rgba(232,112,61,.35); --warn-bg:#352B18; --warn-ink:#E3B25A;
+    --tag-exam-bg:#F3EEE3; --tag-exam:#111111;
+    --tag-sub-bg:#3A2318; --tag-sub:#F0A27E;
+    --tag-hol-bg:#26283D; --tag-hol:#B9BCEB;
+    --tag-event-bg:#302A1D; --tag-event:#E0C98F;
+    --tag-track-bg:#2F2434; --tag-track:#D8B6E6;
+    --shadow:none;
+  }
+}
+/* הכתום המקורי (#D9541E) חלש מדי לטקסט רגיל על קרם (3.5:1), אז טקסט בצבע המוביל מקבל גוון כהה יותר */
+a,.eyebrow,.btn.ghost,.linkbtn,.a11y-foot button,.where summary{color:var(--accent-ink)}
+.a11y-btn{color:var(--ink)}
+html.a11y-contrast{--accent-ink:#FFE45C}
+html.a11y-contrast .a11y-btn{color:var(--accent)}
+
+/* כותרות ב-Rubik (חינמי, Google Fonts) במקום Frank Ruhl Libre */
+h1,h2,.dt,.brand,.h1,h2.t2,.countdown .big,.month>h2,.tl .d b,.course-h,.sent .id,.prose h2{font-family:"Rubik","Assistant",Arial,sans-serif;letter-spacing:-.01em}
+.h1{font-weight:800}
 
 .faq-g{margin:0 0 2.4rem}
 .faq-g{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:1.25rem 1.4rem .4rem}
