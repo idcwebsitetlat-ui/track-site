@@ -70,11 +70,12 @@ def page(name, title, desc, body, current=None, scripts=(), nav=True, logout=Tru
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<meta name="theme-color" content="#0F6E64">
+<meta name="theme-color" content="#F3EEE3">
 <meta name="robots" content="noindex">
 {guard_js}{FONTS}
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/theme-cream.css">
 </head>
 <body>
 {top(current, nav, logout)}
